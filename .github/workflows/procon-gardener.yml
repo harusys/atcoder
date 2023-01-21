@@ -1,0 +1,42 @@
+name: Procon Gardener
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: "0 12 * * *"
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
+
+    - name: Install procon-gardener
+      run: |
+        go install github.com/togatoga/procon-gardener@latest
+        procon-gardener init
+
+    - name: Edit config.json
+      run: |
+        cd ~/.procon-gardener
+        cat <<EOF > ~/.procon-gardener/config.json
+        {
+          "atcoder": {
+            "repository_path": ".",
+            "user_id": "harusys",
+            "user_email": "${{ secrets.GIT_EMAIL }}"
+          }
+        }
+        EOF
+
+    - name: Archive
+      run: |
+        procon-gardener archive
+        git push
