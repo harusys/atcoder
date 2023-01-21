@@ -25,7 +25,6 @@ jobs:
 
     - name: Edit config.json
       run: |
-        cd ~/.procon-gardener
         cat <<EOF > ~/.procon-gardener/config.json
         {
           "atcoder": {
